@@ -47,14 +47,14 @@ node {
         sh "${dockerCMD} build -t kondetimounika/healthcare:1.0 ."
         
         }
-        catch(Exception e){
-            echo 'Exception Occur'
-            currentBuild.result = "FAILURE"
-            emailext body: '''Hello Staragile Deveops
+       // catch(Exception e){
+         //   echo 'Exception Occur'
+           // currentBuild.result = "FAILURE"
+            //emailext body: '''Hello Staragile Deveops
 
-            The Build Number ${BUILD_NUMBER} is Failed. Please look into that.
+            //The Build Number ${BUILD_NUMBER} is Failed. Please look into that.
 
-            Thanks,''', subject: 'The jenkis Job ${JOB_NAME} is Failed ', to: 'kondetimounika80@gmail.com'
+            //Thanks,''', subject: 'The jenkis Job ${JOB_NAME} is Failed ', to: 'kondetimounika80@gmail.com'
             
         }
     }
