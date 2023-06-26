@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   name: medicure-deploy
   labels:
-    app: medicure-mvn-app
+    app: health
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: medicure-mvn-app
+      app: health
   template:
     metadata:
       labels:
-        app: medicure-mvn-app
+        app: health
     spec:
       containers:
-      - name: medicure-mvn-container
+      - name: healthcontainer
         image: kondetimounika/healthcare:1.0
         ports:
         - containerPort: 8082
@@ -23,12 +23,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: medicure-np-service
+  name: healthservice
   labels:
-    app: medicure-mvn-app
+    app: health
 spec:
   selector:
-    app: medicure-mvn-app
+    app: health
 
   type: NodePort
   ports:
