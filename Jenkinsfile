@@ -1,73 +1,30 @@
-node {
-    def mavenHome
-    def mavenCMD
-    def docker
-    def dockerCMD
-    def tagName
+node{
+    stage('git checjout')
+    {
+        git branch: 'master', url: 'https://github.com/kondetimounika80/project-health-care.git'
+    }
+
+    stage('build'){
     
-    stage('prepare environment'){
-        echo 'Initialize the variables'
-        mavenHome = tool name: 'myMaven' , type: 'maven'
-        mavenCMD = "${mavenHome}/bin/mvn"
-        docker = tool name: 'myDocker' , type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
-        dockerCMD = "${docker}/bin/docker"
-        tagName = "1.0"
+    sh 'mvn clean package'
     }
-    stage ('code checkout'){
-        try{
-        echo 'pulling the code from github repo'
-        git 'https://github.com/kondetimounika80/project-health-care.git'
-        }
-        catch(Exception e){
-            echo 'Exception Occur'
-            currentBuild.result = "FAILURE"
-            emailext body: '''Hello Staragile Deveops
-
-            The Build Number ${BUILD_NUMBER} is Failed. Please look into that.
-
-            Thanks,''', subject: 'The jenkis Job ${JOB_NAME} is Failed ', to: 'niladrimondal.mondal@gmail.com'
-        }
+    stage('dockerimagebuild')
+    {
+    sh 'sudo docker build -t kondetimounika/health:1.0 .'
+   
     }
-    stage('Build the application'){
-        echo 'clean and compile and test package'
-        //sh 'mvn clean package'
-        sh "${mavenCMD} clean package"
+    stage('docker image push to registry')
+    {
+    
+    withCredentials([string(credentialsId: 'docker-password', variable: 'docker')]) {
+        sh 'docker login -u kondetimounika -p ${docker}'
+        sh 'docker push kondetimounika/health:1.0'
+    
+}
     }
-    stage('publish html reports'){
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '/var/lib/jenkins/workspace/StrarAgileDevopsPipeline/target/surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report Staragile/var/lib/jenkins/workspace/StrarAgileDevopsPipeline', reportTitles: '', useWrapperFileDirectly: true])
+    stage('deploy')
+    {
+    
+       ansiblePlaybook become: true, credentialsId: 'ansiblekey', disableHostKeyChecking: true, installation: 'myAnsible', inventory: '/etc/ansible/hosts', playbook: 'ansible-playbook.yml' 
     }
-    stage('Build the DockerImage of the application'){
-        try{
-        echo 'creating the docker image'
-		// if you get permission denied issue
-        //sudo usermod -a -G docker jenkins
-        //restart Jenkins
-        //or add sudoers file below line
-        //jenkins ALL=(ALL) NOPASSWD:ALL
-        sh "${dockerCMD} build -t kondetimounika/healthcare:1.0 ."
-        
-        }
-       // catch(Exception e){
-         //   echo 'Exception Occur'
-           // currentBuild.result = "FAILURE"
-            //emailext body: '''Hello Staragile Deveops
-
-            //The Build Number ${BUILD_NUMBER} is Failed. Please look into that.
-
-            //Thanks,''', subject: 'The jenkis Job ${JOB_NAME} is Failed ', to: 'kondetimounika80@gmail.com'
-            
-        }
-    }
-    stage('push the docker image to dockerhub'){
-        echo 'pushing docker image'
-        withCredentials([string(credentialsId: 'docker-password', variable: 'DockerPassword')]) {
-        // some block
-        sh "${dockerCMD} login -u kondetimounika -p ${DockerPassword}"
-        sh "${dockerCMD} push kondetimounika/healthcare:1.0 "
-        }
-    }
-    stage('deploy the application'){
-        
-        ansiblePlaybook become: true, credentialsId: 'ansiblekey', disableHostKeyChecking: true, installation: 'MyAnsible', inventory: '/etc/ansible/hosts', playbook: 'ansible-playbook.yml'
-    }
- }
+}
