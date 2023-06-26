@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sbapp
+  name: health
 spec:
   selector:
     matchLabels:
-      app: sbapp
+      app: health
   replicas: 3
   template:
     metadata:
       labels:
-        app: sbapp
+        app: health
     spec:
       containers:
-      - name: sbapp
+      - name: healthcontainer
         image: kondetimounika/healthcare:1.0
         imagePullPolicy: Always
         ports:
-        - name: sbapp
+        - name: health
           containerPort: 8082
           protocol: TCP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sbapp-lb
+  name: healthservice
   labels:
-    app: sbapp
+    app: health
   annotations:
     service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
     service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
@@ -36,4 +36,4 @@ spec:
   ports:
   - port: 8082
   selector:
-    app: sbapp
+    app: health
