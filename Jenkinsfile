@@ -10,7 +10,7 @@ node{
     }
     stage('dockerimagebuild')
     {
-    sh 'sudo docker build -t kondetimounika/health:1.0 .'
+    sh 'sudo docker build -t kondetimounika/healthcare:1.0 .'
    
     }
     stage('docker image push to registry')
@@ -18,7 +18,7 @@ node{
     
     withCredentials([string(credentialsId: 'docker-password', variable: 'docker')]) {
         sh 'docker login -u kondetimounika -p ${docker}'
-        sh 'docker push kondetimounika/health:1.0'
+        sh 'docker push kondetimounika/healthcare:1.0'
     
 }
     }
