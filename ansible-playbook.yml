@@ -25,6 +25,6 @@
       mode: u=rw,g=r,o=r
    
   - name : run container
-    command : kubectl apply -f /home/ubuntu/medicurelb.yml
+    command : sudo kubectl apply -f /home/ubuntu/medicurelb.yml
     become : yes
     become_user : ubuntu
