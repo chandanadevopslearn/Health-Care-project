@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: healthcontainer
-        image: kondetimounika/healthcare:1.0
+        image: akhil2598/healthcare-project:1.0
         imagePullPolicy: Always
         ports:
-        - name: health
+        - name: health-insurance
           containerPort: 8082
           protocol: TCP
 ---
@@ -26,7 +26,7 @@ kind: Service
 metadata:
   name: healthservice
   labels:
-    app: health
+    app: health-insurance
   annotations:
     service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
     service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
@@ -34,6 +34,6 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 8082
+  - port: 8086
   selector:
-    app: health
+    app: health-insurance
