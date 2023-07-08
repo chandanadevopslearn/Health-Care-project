@@ -1,7 +1,7 @@
 node{
     stage('git checkout')
     {
-        git branch: 'master', url: 'https://github.com/Akhil2598/health-care-project.git'
+        git branch: 'master', url: 'https://github.com/chandanadevopslearn/Health-Care-project.git'
     }
     stage('compile using maven'){
     
@@ -17,15 +17,15 @@ node{
     }
     stage('dockerimagebuild')
     {
-    sh 'sudo docker build -t akhil2598/healthcare-project:1.0 .'
+    sh 'sudo docker build -t mchandana123/healthcare-project:1.0 .'
    
     }
     stage('docker image push to registry')
     {
     
     withCredentials([string(credentialsId: 'dockercred', variable: 'dockercred')]) {
-        sh 'docker login -u akhil2598 -p ${dockercred}'
-        sh 'docker push akhil2598/healthcare-project:1.0'
+        sh 'docker login -u mchandana123 -p ${dockercred}'
+        sh 'docker push mchandana123/healthcare-project:1.0'
     
 }
     }
