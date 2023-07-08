@@ -31,7 +31,7 @@ node{
     }
     stage('deploy')
     {
-       sh 'sudo chmod 777 /etc/ansible/akhil.pem'
+       sh 'sudo chmod 777 /etc/ansible/ansible.pem'
        ansiblePlaybook become: true, credentialsId: 'akhil', disableHostKeyChecking: true, installation: 'myansible', inventory: '/etc/ansible/hosts', playbook: 'ansible-playbook.yml' 
     }
 }
